@@ -15,9 +15,12 @@
         {{ form.newtodo }}
     </form>
     <div>
-        {% for item in list %}
-            <p>{{ item }}</p>
-        {% endfor%}
+        <ul>
+            {% for item in list %}
+                <li><input type="checkbox">{{ item }}</li>
+            {% endfor%}
+        </ul>
+        
     </div>
 </body>
 </html>
