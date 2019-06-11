@@ -11,6 +11,10 @@ def index():
         list.append(form.newtodo.data)
         form.newtodo.data = ''
     return render_template('index.html', title='Home', form=form, list=list)
+
+
+@app.route('/markcomplete', methods=)
+def markComplete(id):
     
 
 
