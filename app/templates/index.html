@@ -13,14 +13,25 @@
     <form action="" method="POST">
         {{ form.hidden_tag() }}
         {{ form.newtodo }}
+        {{ form.time }}
+        {{ form.add }}
     </form>
     <div>
+        <h2>To-do</h2>
         <ul>
             {% for item in list %}
-              <li> <a href="{{ url_for('complete', id=id(item)) }}"> <input type="checkbox">{{ item }}</a></li>
+               <li> <a href="{{ url_for('markComplete', id = list.index(item)) }}"> <input type="checkbox">{{ item.task }}  {{ item.time }}</a></li>
             {% endfor%}
-        </ul>
-        
+        </ul>       
     </div>
+
+    <div>
+            <h2>Completed</h2>
+            <ul>
+                {% for item in completed %}
+                   <li> <a href="{{ url_for('markInComplete', id = completed.index(item)) }}"> <input type="checkbox">{{ item.task }}</a></li>
+                {% endfor%}
+            </ul>       
+        </div>
 </body>
 </html>

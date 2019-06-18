@@ -4,4 +4,6 @@ from wtforms.validators import DataRequired
 
 class AddToDo(FlaskForm):
     newtodo = StringField('Add a To-Do', validators=[DataRequired()])
+    time = StringField('Time')
+    add = SubmitField('Add')
     
