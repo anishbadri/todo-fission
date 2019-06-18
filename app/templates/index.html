@@ -18,18 +18,22 @@
     </form>
     <div>
         <h2>To-do</h2>
-        <ul>
+        <!-- <ul> -->
             {% for item in list %}
-               <li> <a href="{{ url_for('markComplete', id = list.index(item)) }}"> <input type="checkbox">{{ item.task }}  {{ item.time }}</a></li>
+               <div> 
+                   <a href="{{ url_for('markComplete', id = item.id) }}">{{ item.task }}({{ item.time }}mins)</a>
+                   <a href="{{ url_for('deleteTodo', id = item.id) }}">Delete</a>
+
+               </div>
             {% endfor%}
-        </ul>       
+        <!-- </ul>        -->
     </div>
 
     <div>
             <h2>Completed</h2>
             <ul>
                 {% for item in completed %}
-                   <li> <a href="{{ url_for('markInComplete', id = completed.index(item)) }}"> <input type="checkbox">{{ item.task }}</a></li>
+                   <li> <a href="{{ url_for('markInComplete', id = item.id) }}"> <input type="checkbox">{{ item.task }} {{ item.time }}</a></li>
                 {% endfor%}
             </ul>       
         </div>
