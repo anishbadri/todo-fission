@@ -19,7 +19,7 @@ def index():
         db.session.add(newTask)  
         db.session.commit()
         return redirect(url_for('index'))
-    taskList = Task.query.filter_by(status=0)
+    taskList = Task.query.all()
     completed = Task.query.filter_by(status=1)
     return render_template('index.html', title='Home', form=form, task=taskList, completed = completed, form2=form2)
 
@@ -35,6 +35,20 @@ def markComplete(id):
 def markInComplete(id):
     incomplete = Task.query.get(id)
     incomplete.status = 0
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/update-task-status/<int:id>', methods=['POST'])
+def updateTaskStatus(id):
+    task = Task.query.get(id)
+    task.status = 0 if task.status == 1 else 1
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/update-todo-status/<int:id>', methods=['POST'])
+def updateTodoStatus(id):
+    todo = Todo.query.get(id)
+    todo.status = 0 if todo.status == 1 else 1
     db.session.commit()
     return redirect(url_for('index'))
     

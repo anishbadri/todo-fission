@@ -8,55 +8,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css">
     <script src="main.js"></script> -->
+    <style>
+        .todo-Item{
+            padding-left: 73px;
+        }
+
+        li.completed label {
+            text-decoration: line-through;
+        }
+        ul {
+            list-style-type: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="col-md-8">
-            Hell
-        </div>
-        <h1>ToDo-Fission</h1>
-            <form action="" method="POST">
-                {{ form.hidden_tag() }}
-                {{ form.newtask }}
-                {{ form.time }}
-                {{ form.add }}
-            </form>
-            <div>
-                <h2>To-do</h2>
-                <!-- <ul> -->
-                    {% for item in task %}
-                       <div class="container"> 
-                           <a href="{{ url_for('markComplete', id = item.id) }}">{{ item.task }}</a>
-                            <button>Fission</button>
-                            <div>
-                                {% for todo in  item.todos%}
-                                    <div>
-                                        <a>{{todo.todo_task}}</a>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            <form action="{{url_for('todoFission', id=item.id)}}" method="POST">
-                                {{ form2.hidden_tag() }}
-                                {{ form2.newtodo }}
-                                {{ form2.time }}
-                                {{ form2.add }}
-                            </form>
-                       </div>
-                    {% endfor%}
-                <!-- </ul>        -->
-            </div>
-        
-            <div>
-                    <h2>Completed</h2>
-                    <ul>
-                        {% for item in completed %}
-                           <li> <a href="{{ url_for('markInComplete', id = item.id) }}">{{ item.task }}</a></li>
-                        {% endfor%}
-                    </ul>       
-            </div>
+        <h1>ToDo-Fission</h1>        
+            <h2>Tasks</h2>
+            <ul class="task">
+                {% for item in task %}
+                    <div class="row">
+                        <div class="col-8">    
+                            {% if item.status == 0 %}
+                                <li data-id="{{ item.id }}">   
+                                <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
+                                <button>Fission</button>
+                                <ul class="todo">
+                                    <hr class="my-4">
+                                    {% for todo in item.todos %}
+                                        {% if todo.status == 0 %}
+                                        <li data-id="{{ todo.id }}">
+                                        <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
+                                        {% endif %}
+                                        <hr class="my-4">
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <li data-id="{{ item.id }}" class="completed">
+                                <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
+                            {% endif %}
+                            
+                            <hr class="my-4">
+                            </li>
+                        </div>
+                    </div>
+                {% endfor%}
+            </ul>
+            <button>
+                <form action="" method="POST">
+                    {{ form.hidden_tag() }}
+                    {{ form.newtask }}
+                </form>
+            </button>       
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        function toggleTaskComplete(elem) {
+            console.log(elem.dataset.id)
+            itemchanged = document.querySelector(`li[data-id="${elem.dataset.id}"]`)
+            fetch(`/update-task-status/${elem.dataset.id}`,{
+                method: 'post'
+            }).then(updateUI =>{
+                itemchanged.classList.toggle('completed')
+            });
+        }
+
+        function toggleTodoComplete(elem) {
+            console.log(elem.dataset.id)
+            itemchanged = document.querySelector(`li[data-id="${elem.dataset.id}"]`)
+            console.log(itemchanged)
+            fetch(`/update-todo-status/${elem.dataset.id}`,{
+                method: 'post'
+            }).then(updateUI =>{
+                itemchanged.classList.toggle('completed')
+            });
+        }
+    </script>
 </body>
 </html>
