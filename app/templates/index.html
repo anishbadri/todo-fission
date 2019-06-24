@@ -13,7 +13,7 @@
             padding-left: 73px;
         }
 
-        li.completed label {
+        li.completed > label {
             text-decoration: line-through;
         }
         ul {
@@ -26,32 +26,26 @@
         <h1>ToDo-Fission</h1>        
             <h2>Tasks</h2>
             <ul class="task">
-                {% for item in task %}
-                    <div class="row">
-                        <div class="col-8">    
-                            {% if item.status == 0 %}
-                                <li data-id="{{ item.id }}">   
-                                <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
-                                <button>Fission</button>
-                                <ul class="todo">
-                                    <hr class="my-4">
-                                    {% for todo in item.todos %}
-                                        {% if todo.status == 0 %}
-                                        <li data-id="{{ todo.id }}">
-                                        <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
-                                        {% endif %}
-                                        <hr class="my-4">
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <li data-id="{{ item.id }}" class="completed">
-                                <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
-                            {% endif %}
-                            
-                            <hr class="my-4">
-                            </li>
-                        </div>
-                    </div>
+                {% for item in task %}   
+                    {% if item.status == 0 %}
+                        <li data-id="{{ item.id }}">   
+                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
+                        <button>Fission</button>
+                        <ul class="todo">
+                            {% for todo in item.todos %}
+                                <hr class="my-4">
+                                {% if todo.status == 0 %}
+                                <li data-id="{{ todo.id }}">
+                                <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <li data-id="{{ item.id }}" class="completed">
+                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
+                    {% endif %}   
+                        <hr class="my-4">
+                        </li>
                 {% endfor%}
             </ul>
             <button>
