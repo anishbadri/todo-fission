@@ -28,23 +28,27 @@
             <ul class="task">
                 {% for item in task %}   
                     {% if item.status == 0 %}
-                        <li data-id="{{ item.id }}">   
+                        <li data-id="{{ item.id }}" class="task-item">   
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
                         <button>Fission</button>
                         <ul class="todo">
                             {% for todo in item.todos %}
-                                <hr class="my-4">
+                                <hr class="">
                                 {% if todo.status == 0 %}
-                                <li data-id="{{ todo.id }}">
+                                <li data-id="{{ todo.id }}" class="todo-item">
                                 <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
+                                {% else %}
+                                <li data-id="{{ todo.id }}" class="todo-item completed">
+                                <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)" checked><label >{{ todo.todo_task }}</label>
                                 {% endif %}
+
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <li data-id="{{ item.id }}" class="completed">
+                        <li data-id="{{ item.id }}" class="completed task-item">
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
                     {% endif %}   
-                        <hr class="my-4">
+                        <hr class="">
                         </li>
                 {% endfor%}
             </ul>
@@ -60,8 +64,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
         function toggleTaskComplete(elem) {
-            console.log(elem.dataset.id)
-            itemchanged = document.querySelector(`li[data-id="${elem.dataset.id}"]`)
+            // console.log(elem.dataset.id)
+            // console.log(elem)
+            itemchanged = document.querySelector(`li.task-item[data-id="${elem.dataset.id}"]`)
             fetch(`/update-task-status/${elem.dataset.id}`,{
                 method: 'post'
             }).then(updateUI =>{
@@ -70,9 +75,8 @@
         }
 
         function toggleTodoComplete(elem) {
-            console.log(elem.dataset.id)
-            itemchanged = document.querySelector(`li[data-id="${elem.dataset.id}"]`)
-            console.log(itemchanged)
+            // console.log(elem.dataset.id)
+            itemchanged = document.querySelector(`li.todo-item[data-id="${elem.dataset.id}"]`)
             fetch(`/update-todo-status/${elem.dataset.id}`,{
                 method: 'post'
             }).then(updateUI =>{
