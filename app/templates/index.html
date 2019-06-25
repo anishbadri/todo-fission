@@ -30,7 +30,7 @@
                     {% if item.status == 0 %}
                         <li data-id="{{ item.id }}" class="task-item">   
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
-                        <button>Fission</button>
+                        <button class="fission">Fission</button>
                         <ul class="todo">
                             {% for todo in item.todos %}
                                 <hr class="">
