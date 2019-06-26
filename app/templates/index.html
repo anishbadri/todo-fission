@@ -13,11 +13,14 @@
             padding-left: 73px;
         }
 
-        li.completed > label {
+        li.completed label {
             text-decoration: line-through;
         }
         ul {
             list-style-type: none;
+        }
+        .fissioned {
+            display: none;
         }
     </style>
 </head>
@@ -29,25 +32,31 @@
                 {% for item in task %}   
                     {% if item.status == 0 %}
                         <li data-id="{{ item.id }}" class="task-item">   
+                        <div>
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
-                        <button class="fission">Fission</button>
-                        <ul class="todo">
+                        <button class="fission" data-id="{{ item.id }}">Fission</button>
+                    {% else %}
+                        <li data-id="{{ item.id }}" class="completed task-item">
+                        <div>
+                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
+                        <button class="fission fissioned" data-id="{{ item.id }}">Fission</button>
+                    {% endif %}   
+                    </div>
+                        <ul class="todo"  data-id="{{ item.id }}">
                             {% for todo in item.todos %}
                                 <hr class="">
                                 {% if todo.status == 0 %}
-                                <li data-id="{{ todo.id }}" class="todo-item">
-                                <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
-                                {% else %}
-                                <li data-id="{{ todo.id }}" class="todo-item completed">
-                                <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)" checked><label >{{ todo.todo_task }}</label>
+                                    <li data-id="{{ todo.id }}" class="todo-item">
+                                    <div>
+                                    <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
+                                    {% else %}
+                                    <li data-id="{{ todo.id }}" class="todo-item completed">
+                                    <div>
+                                    <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)" checked><label >{{ todo.todo_task }}</label>
                                 {% endif %}
-
+                            </div>
                             {% endfor %}
                         </ul>
-                    {% else %}
-                        <li data-id="{{ item.id }}" class="completed task-item">
-                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
-                    {% endif %}   
                         <hr class="">
                         </li>
                 {% endfor%}
@@ -71,6 +80,8 @@
                 method: 'post'
             }).then(updateUI =>{
                 itemchanged.classList.toggle('completed')
+                // console.log(itemchanged.querySelector('button'))
+                itemchanged.querySelector('button').classList.toggle('fissioned')
             });
         }
 
@@ -81,8 +92,39 @@
                 method: 'post'
             }).then(updateUI =>{
                 itemchanged.classList.toggle('completed')
+
             });
         }
+
+        document.querySelectorAll('button.fission').forEach(function(elem){
+            elem.addEventListener('click', function(){
+                console.log(elem.dataset.id)
+                //button will be disables later
+                // elem.disabled = true
+                var ul = document.querySelector(`ul.todo[data-id="${elem.dataset.id}"]`)
+                var li = document.createElement('li')
+                //hide existing todo input forms 
+                var existing = document.querySelector('div.add-todo')
+                if(existing) {
+                    existing.parentNode.removeChild(existing);
+                }
+                console.log(existing)
+                li.innerHTML = `<div class="add-todo"><hr><input class = "add-todo" autofocus="" placeholder="Fission your Todo"></div>`;
+                ul.appendChild(li)
+
+            })
+        });
+
+
+        document.querySelector('ul.task').addEventListener('keydown', event=> {
+            if(event.which == 13) {
+                if(event.target.matches('input.add-todo')) {
+                    data = document.querySelector('input.add-todo').value;
+                    console.log(data)
+                }
+            }
+        });
+
     </script>
 </body>
 </html>
