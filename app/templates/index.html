@@ -16,6 +16,7 @@
         li.completed label {
             text-decoration: line-through;
         }
+
         ul {
             list-style-type: none;
         }
@@ -108,10 +109,10 @@
                 if(existing) {
                     existing.parentNode.removeChild(existing);
                 }
-                console.log(existing)
-                li.innerHTML = `<div class="add-todo"><hr><input class = "add-todo" autofocus="" placeholder="Fission your Todo"></div>`;
+                // console.log(existing)
+                li.innerHTML = `<div class="add-todo"><hr><input class = "add-todo" placeholder="Fission your Todo"></div>`;
                 ul.appendChild(li)
-
+                // li.focus();
             })
         });
 
@@ -119,8 +120,14 @@
         document.querySelector('ul.task').addEventListener('keydown', event=> {
             if(event.which == 13) {
                 if(event.target.matches('input.add-todo')) {
-                    data = document.querySelector('input.add-todo').value;
-                    console.log(data)
+                    input = document.querySelector('input.add-todo');
+                    //call the link to add data
+                    //display that todo item 
+                    console.log(input.value)
+                    console.log(self)
+                    //clearing the input after saving the data
+                    input.value = " "
+
                 }
             }
         });
