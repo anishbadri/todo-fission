@@ -1,41 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"> 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>{{ title }} - ToDo-Fission</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css">
     <script src="main.js"></script> -->
+    <style>
+        .todo-Item{
+            padding-left: 73px;
+        }
+
+        li.completed label {
+            text-decoration: line-through;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+        .fissioned {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>ToDo-Fission</h1>
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.newtodo }}
-        {{ form.time }}
-        {{ form.add }}
-    </form>
-    <div>
-        <h2>To-do</h2>
-        <!-- <ul> -->
-            {% for item in list %}
-               <div> 
-                   <a href="{{ url_for('markComplete', id = item.id) }}">{{ item.task }}({{ item.time }}mins)</a>
-                   <a href="{{ url_for('deleteTodo', id = item.id) }}">Delete</a>
-
-               </div>
-            {% endfor%}
-        <!-- </ul>        -->
-    </div>
-
-    <div>
-            <h2>Completed</h2>
-            <ul>
-                {% for item in completed %}
-                   <li> <a href="{{ url_for('markInComplete', id = item.id) }}"> <input type="checkbox">{{ item.task }} {{ item.time }}</a></li>
+    <div class="container">
+        <h1>ToDo-Fission</h1>        
+            <h2>Tasks</h2>
+            <ul class="task">
+                {% for item in task %}   
+                    {% if item.status == 0 %}
+                        <li data-id="{{ item.id }}" class="task-item">   
+                        <div>
+                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
+                        <button class="fission" data-id="{{ item.id }}">Fission</button>
+                    {% else %}
+                        <li data-id="{{ item.id }}" class="completed task-item">
+                        <div>
+                        <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
+                        <button class="fission fissioned" data-id="{{ item.id }}">Fission</button>
+                    {% endif %}   
+                    </div>
+                        <ul class="todo"  data-id="{{ item.id }}">
+                            {% for todo in item.todos %}
+                                <hr class="">
+                                {% if todo.status == 0 %}
+                                    <li data-id="{{ todo.id }}" class="todo-item">
+                                    <div>
+                                    <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)"><label >{{ todo.todo_task }}</label>
+                                    {% else %}
+                                    <li data-id="{{ todo.id }}" class="todo-item completed">
+                                    <div>
+                                    <input type="checkbox" data-id="{{ todo.id }}" onclick="toggleTodoComplete(this)" checked><label >{{ todo.todo_task }}</label>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </ul>
+                        <hr class="">
+                        </li>
                 {% endfor%}
-            </ul>       
-        </div>
+            </ul>
+            <button>
+                <form>
+                    {{ form.hidden_tag() }}
+                    {{ form.newtask }}
+                </form>
+            </button>       
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        function toggleTaskComplete(elem) {
+            // console.log(elem.dataset.id)
+            // console.log(elem)
+            itemchanged = document.querySelector(`li.task-item[data-id="${elem.dataset.id}"]`)
+            fetch(`/update-task-status/${elem.dataset.id}`,{
+                method: 'post'
+            }).then(updateUI =>{
+                itemchanged.classList.toggle('completed')
+                // console.log(itemchanged.querySelector('button'))
+                itemchanged.querySelector('button').classList.toggle('fissioned')
+            });
+        }
+
+        function toggleTodoComplete(elem) {
+            // console.log(elem.dataset.id)
+            itemchanged = document.querySelector(`li.todo-item[data-id="${elem.dataset.id}"]`)
+            fetch(`/update-todo-status/${elem.dataset.id}`,{
+                method: 'post'
+            }).then(updateUI =>{
+                itemchanged.classList.toggle('completed')
+
+            });
+        }
+
+        document.querySelectorAll('button.fission').forEach(function(elem){
+            elem.addEventListener('click', function(){
+                console.log(elem.dataset.id)
+                //button will be disables later
+                // elem.disabled = true
+                var ul = document.querySelector(`ul.todo[data-id="${elem.dataset.id}"]`)
+                var li = document.createElement('li')
+                //hide existing todo input forms 
+                var existing = document.querySelector('div.add-todo')
+                if(existing) {
+                    existing.parentNode.removeChild(existing);
+                }
+                // console.log(existing)
+                li.innerHTML = `<div class="add-todo"><hr><input class = "add-todo" placeholder="Fission your Todo"></div>`;
+                ul.appendChild(li)
+                // li.focus();
+            })
+        });
+
+
+        document.querySelector('ul.task').addEventListener('keydown', event=> {
+            if(event.which == 13) {
+                if(event.target.matches('input.add-todo')) {
+                    input = document.querySelector('input.add-todo');
+                    //call the link to add data
+                    
+                    //display that todo item 
+                    console.log(input.value)
+                    console.log(self)
+                    //clearing the input after saving the data
+                    input.value = " "
+
+                }
+            }
+        });
+
+        $('form').submit(function(e){
+            var url = "{{ url_for('index') }}"
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $('form').serialize(),
+                success: function(data){
+                    console.log(data);
+                } 
+            })
+            console.log(url)
+            e.preventDefault();
+        });
+    </script>
 </body>
 </html>
