@@ -65,6 +65,16 @@ def todoFission(id):
         return redirect(url_for('index'))         
     return 'Failed'
 
+# def addTodo():
+#     newtoData = 
+#     task = Task.query.get(id)
+#     newTodo = Todo(todo_task = newtoData, ) //notimefornow
+
 # @app.route('/deleteTodo/<int:id>')
 # def deleteTodo(id):
 #         Todo.query.get(id)
+
+@app.route("/home")
+def home():
+    return render_template('home.html')
+

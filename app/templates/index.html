@@ -110,7 +110,7 @@
                     existing.parentNode.removeChild(existing);
                 }
                 // console.log(existing)
-                li.innerHTML = `<div class="add-todo"><hr><input class = "add-todo" placeholder="Fission your Todo"></div>`;
+                li.innerHTML = `<div class='add-todo'><hr><form action='' method='POST'>{{ form2.csrf_token() }}{{ form2.newtodo }}</form></div>`;
                 ul.appendChild(li)
                 // li.focus();
             })
