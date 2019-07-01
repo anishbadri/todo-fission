@@ -63,7 +63,7 @@
                 {% endfor%}
             </ul>
             <button>
-                <form action="" method="POST">
+                <form>
                     {{ form.hidden_tag() }}
                     {{ form.newtask }}
                 </form>
@@ -133,6 +133,19 @@
             }
         });
 
+        $('form').submit(function(e){
+            var url = "{{ url_for('index') }}"
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $('form').serialize(),
+                success: function(data){
+                    console.log(data);
+                } 
+            })
+            console.log(url)
+            e.preventDefault();
+        });
     </script>
 </body>
 </html>
