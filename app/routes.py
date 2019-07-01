@@ -12,16 +12,20 @@ def index():
     form2 = AddTodo()
     # newtaskTime = None
     if form.validate_on_submit():
-        newTask = form.newtask.data
+        print("Submitted")
+        newTaskData = form.newtask.data
         # if form.time.data:
         #     newtaskTime = form.time.data   
-        newTask = Task(task=newTask)       
+        newTask = Task(task=newTaskData)       
         db.session.add(newTask)  
         db.session.commit()
         return redirect(url_for('index'))
 
     if form2.validate_on_submit():
-        print(form2.taskid.data, form2.newtodo.data)
+        newTodo = Todo(task_id=int(form2.taskid.data), todo_task = form2.newtodo.data, time=10)
+        db.session.add(newTodo)
+        db.session.commit()
+        # print(form2.taskid.data, form2.newtodo.data)
     taskList = Task.query.all()
     completed = Task.query.filter_by(status=1)
     return render_template('index.html', title='Home', form=form, task=taskList, completed = completed, form2=form2)
@@ -77,7 +81,28 @@ def todoFission(id):
 # def deleteTodo(id):
 #         Todo.query.get(id)
 
-@app.route("/home")
-def home():
-    return render_template('home.html')
+@app.route("/addnewtask", methods=['POST'])
+def addNewTask():
+    form = AddTask()
+    if form.validate_on_submit():
+        newTaskData = form.newtask.data
+        newTask = Task(task=newTaskData) 
+        db.session.add(newTask)  
+        db.session.commit()
+    return "Success"
+
+@app.route("/addnewtodo", methods=['POST'])
+def addNewTodo():
+    form = AddTodo()
+    if form.validate_on_submit():
+        print("success submit")
+    return "Success"
+
+
+@app.route("/deletetask/<int:id>", methods=['POST'])
+def deleteTask(id):
+    taskDelete = Task.query.get(id)
+    db.session.delete(taskDelete)
+    db.session.commit()
+
 

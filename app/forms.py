@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
 
 class AddTask(FlaskForm):
@@ -9,7 +9,7 @@ class AddTask(FlaskForm):
 
 
 class AddTodo(FlaskForm):
-    taskid = StringField('Time Required')
+    taskid = HiddenField('Time Required')
     newtodo = StringField('Add a Todo', validators=[DataRequired()])
     time = StringField('Time Required')
     add = SubmitField('Add')

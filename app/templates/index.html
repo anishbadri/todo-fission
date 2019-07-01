@@ -36,11 +36,13 @@
                         <div>
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)"><label >{{ item.task }}</label>
                         <button class="fission" data-id="{{ item.id }}">Fission</button>
+                        <button class="delete-task" data-id="{{ item.id }}">Delete</button>
                     {% else %}
                         <li data-id="{{ item.id }}" class="completed task-item">
                         <div>
                         <input type="checkbox" data-id="{{ item.id }}" onclick="toggleTaskComplete(this)" checked><label >{{ item.task }}</label>
                         <button class="fission fissioned" data-id="{{ item.id }}">Fission</button>
+                        <button class="delete-task" data-id="{{ item.id }}">Delete</button>
                     {% endif %}   
                     </div>
                         <ul class="todo"  data-id="{{ item.id }}">
@@ -63,13 +65,13 @@
                 {% endfor%}
             </ul>
             <button>
-                <form>
+                <form class="task">
                     {{ form.hidden_tag() }}
                     {{ form.newtask }}
                 </form>
             </button>       
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
@@ -110,7 +112,7 @@
                     existing.parentNode.removeChild(existing);
                 }
                 // console.log(existing)
-                li.innerHTML = `<div class='add-todo'><hr><form action='' method='POST'>{{ form2.csrf_token() }}{{ form2.newtodo }} {{form2.taskid(value="${elem.dataset.id}")}}</form></div>`;
+                li.innerHTML = `<div class='add-todo'><hr><form class="new-todo">{{ form2.csrf_token() }}{{ form2.newtodo }} {{form2.taskid(value="${elem.dataset.id}")}}</form></div>`;
                 ul.appendChild(li)
                 // li.focus();
             })
@@ -128,24 +130,44 @@
                     console.log(self)
                     //clearing the input after saving the data
                     input.value = " "
-
+                    
                 }
             }
         });
 
-        $('form').submit(function(e){
-            var url = "{{ url_for('index') }}"
+        document.querySelectorAll('button.delete-task').forEach(function(elem){
+            elem.addEventListener('click', function(){
+                fetch(`/deletetask/${elem.dataset.id}`,{
+                    method: 'POST'
+                }).then( () => {
+                    console.log("Deleted");
+                    taskDeleteListElement = document.querySelector(`li.task-item[data-id="${elem.dataset.id}"]`)
+                    taskDeleteListElement.parentNode.removeChild(taskDeleteListElement);
+                });
+            })
+        });
+
+
+        document.querySelector("ul.task").addEventListener('submit', event =>{
+            console.log(event.target)
+            if(event.target.matches('form.new-todo')) {
+                console.log("Todo Form clicked ")
+            }
+        });
+
+        $('form.task').submit(function(e){
+            e.preventDefault();
+            var url = "{{ url_for('addNewTask') }}"
             $.ajax({
                 type: "POST",
                 url: url,
                 data: $('form').serialize(),
                 success: function(data){
-                    console.log(data);
+
                 } 
-            })
-            console.log(url)
-            e.preventDefault();
+            })            
         });
+
     </script>
 </body>
 </html>
