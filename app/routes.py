@@ -19,6 +19,9 @@ def index():
         db.session.add(newTask)  
         db.session.commit()
         return redirect(url_for('index'))
+
+    if form2.validate_on_submit():
+        print(form2.taskid.data, form2.newtodo.data)
     taskList = Task.query.all()
     completed = Task.query.filter_by(status=1)
     return render_template('index.html', title='Home', form=form, task=taskList, completed = completed, form2=form2)
@@ -65,6 +68,16 @@ def todoFission(id):
         return redirect(url_for('index'))         
     return 'Failed'
 
+# def addTodo():
+#     newtoData = 
+#     task = Task.query.get(id)
+#     newTodo = Todo(todo_task = newtoData, ) //notimefornow
+
 # @app.route('/deleteTodo/<int:id>')
 # def deleteTodo(id):
 #         Todo.query.get(id)
+
+@app.route("/home")
+def home():
+    return render_template('home.html')
+

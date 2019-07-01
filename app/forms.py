@@ -9,7 +9,7 @@ class AddTask(FlaskForm):
 
 
 class AddTodo(FlaskForm):
-    taskid = None
+    taskid = StringField('Time Required')
     newtodo = StringField('Add a Todo', validators=[DataRequired()])
     time = StringField('Time Required')
     add = SubmitField('Add')
